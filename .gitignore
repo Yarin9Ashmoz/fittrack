@@ -1,0 +1,19 @@
+# Virtual environment
+venv/
+.env/
+
+# Config files
+config.ini
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database dumps / local files
+*.db
+
+# IDE
+.idea/
+.vscode/
+
+.DS_Store
