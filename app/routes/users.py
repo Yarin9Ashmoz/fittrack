@@ -12,7 +12,7 @@ users_bp = Blueprint("users", __name__)
 
 @users_bp.post("/")
 def create_user_route():
-    data = request.json
+    data = request.get_json()
     user_data = UserCreateSchema(**data)
     new_user = create_user(user_data)
     return jsonify(UserResponseSchema.from_orm(new_user).dict()), 201
