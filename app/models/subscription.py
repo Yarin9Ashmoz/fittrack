@@ -6,7 +6,7 @@ subscriptions = Table(
     "subscriptions",
     metadata,
     Column("id", Integer, primary_key=True),
-    Column("users.id", Integer, ForeignKey("users.id"), nullable=False),
+    Column("users_id", Integer, ForeignKey("users.id"), nullable=False),
     Column("plan_id", Integer, ForeignKey("plans.id"), nullable=False),
     Column("status", String(20), nullable=False, default="active"),
     Column("start_date", Date, nullable=False),
