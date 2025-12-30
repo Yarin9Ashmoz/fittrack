@@ -1,23 +1,25 @@
 from pydantic import BaseModel
 from datetime import date
+from typing import Optional
 
 
 class SubscriptionCreateSchema(BaseModel):
     user_id: int
     plan_id: int
-    status: str = "active"
-    start_date: date
-    end_date: date
-    remaining_entries: int | None = None
-    frozen_until: str | None = None
+    remaining_entries: Optional[int] = None
 
-class UpdateSubscriptionSchema(BaseModel):
-    plan_id: int | None = None
-    status: str | None = None
-    start_date: date | None = None
-    end_date: date | None = None
-    remaining_entries: int | None = None
-    frozen_until: str | None = None
+
+class SubscriptionUpdateSchema(BaseModel):
+    # עדכון כללי של מנוי (אם תרצה בעתיד)
+    plan_id: Optional[int] = None
+    remaining_entries: Optional[int] = None
+
+
+class SubscriptionUpdateEntriesSchema(BaseModel):
+    remaining_entries: int
+
+class SubscriptionFreezeSchema(BaseModel):
+    frozen_until: date
 
 class SubscriptionResponseSchema(BaseModel):
     id: int
@@ -26,8 +28,8 @@ class SubscriptionResponseSchema(BaseModel):
     status: str
     start_date: date
     end_date: date
-    remaining_entries: int | None
-    frozen_until: str | None
+    remaining_entries: Optional[int]
+    frozen_until: Optional[date]
 
     class Config:
         orm_mode = True

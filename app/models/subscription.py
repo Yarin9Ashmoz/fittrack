@@ -5,7 +5,7 @@ from app.db.database import metadata
 subscriptions = Table(
     "subscriptions",
     metadata,
-    Column("id", Integer, primary_key=True),
+    Column("id", Integer, primary_key=True, autoincrement=True),
     Column("users_id", Integer, ForeignKey("users.id"), nullable=False),
     Column("plan_id", Integer, ForeignKey("plans.id"), nullable=False),
     Column("status", String(20), nullable=False, default="active"),

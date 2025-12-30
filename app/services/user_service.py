@@ -1,5 +1,5 @@
 from app.db.database import engine
-from app.models.users import users
+from app.models.user import users
 from app.exceptions import NotFoundError, DuplicateError
 
 def create_user(user_data):

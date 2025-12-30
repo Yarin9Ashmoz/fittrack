@@ -7,7 +7,7 @@ from app.db.database import metadata
 payments = Table(
     "payments",
     metadata,
-    Column("id", Integer, primary_key=True),
+    Column("id", Integer, primary_key=True, autoincrement=True),
     Column("subscription_id", Integer, ForeignKey("subscriptions.id"), nullable=False),
     Column("amount", Float, nullable=False),
     Column("status", String(20), nullable=False, default="pending"),

@@ -4,7 +4,7 @@ from app.db.database import metadata
 workout_items = Table(
     "workout_items",
     metadata,
-    Column("id", Integer, primary_key=True),
+    Column("id", Integer, primary_key=True, autoincrement=True),
     Column("plan_id", Integer, ForeignKey("workout_plans.id"), nullable=False),
     Column("exercise_name", String(100), nullable=False),
     Column("sets", Integer, nullable=True),

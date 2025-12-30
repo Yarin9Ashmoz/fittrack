@@ -12,7 +12,7 @@ checkins_bp = Blueprint("checkins", __name__)
 def create_checkin_route():
     data = request.get_json()
     checkin_data = CheckinCreateSchema(**data)
-    new_checkin = create_checkin(checkin_data)
+    new_checkin = create_checkin(checkin_data.member_id, checkin_data.class_id)
     return jsonify(CheckinResponseSchema.from_orm(new_checkin).dict()), 201
 
 

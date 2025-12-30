@@ -3,7 +3,7 @@ from app.db.database import metadata
 
 users = Table(
     "users", metadata,
-    Column("id", Integer, primary_key=True),
+    Column("id", Integer, primary_key=True, autoincrement=True),
     Column("first_name", String(50), nullable=False),
     Column("last_name", String(50), nullable=False),
     Column("email", String(100), nullable=False, unique=True),

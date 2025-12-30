@@ -3,7 +3,8 @@ from flask import Blueprint, request, jsonify
 from app.schemas.subscription import (
     SubscriptionCreateSchema,
     SubscriptionResponseSchema,
-    SubscriptionUpdateEntriesSchema
+    SubscriptionUpdateEntriesSchema,
+    SubscriptionFreezeSchema
 )
 
 from app.services.subscription_service import (
@@ -37,7 +38,9 @@ def get_member_subscriptions_route(member_id):
 
 @subscriptions_bp.put("/<int:subscription_id>/freeze")
 def freeze_subscription_route(subscription_id):
-    updated = freeze_subscription(subscription_id)
+    data = request.get_json()
+    freeze_data = SubscriptionFreezeSchema(**data)
+    updated = freeze_subscription(subscription_id, freeze_data.frozen_until)
     return jsonify(SubscriptionResponseSchema.from_orm(updated).dict()), 200
 
 @subscriptions_bp.put("/<int:subscription_id>/unfreeze")
@@ -56,3 +59,4 @@ def update_entries_route(subscription_id):
     update_data = SubscriptionUpdateEntriesSchema(**data)
     updated = update_remaining_entries(subscription_id, update_data.remaining_entries)
     return jsonify(SubscriptionResponseSchema.from_orm(updated).dict()), 200
+

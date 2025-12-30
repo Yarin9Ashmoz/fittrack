@@ -10,8 +10,10 @@ class CheckinCreateSchema(BaseModel):
 class CheckinResponseSchema(BaseModel):
     id: int
     member_id: int
+    subscription_id: int
     class_id: int | None
     timestamp: datetime
 
     class Config:
         orm_mode = True
+
