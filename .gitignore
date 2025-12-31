@@ -1,19 +1,54 @@
-# Virtual environment
-venv/
-.env/
-
-# Config files
-config.ini
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
 
-# Database dumps / local files
-*.db
+# Virtual Environment
+backend/venv/
+venv/
+ENV/
+env/
 
 # IDE
-.idea/
 .vscode/
-
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Configuration (IMPORTANT - don't commit passwords!)
+backend/config.ini
+
+# Logs
+*.log
+
+# Flask
+instance/
+.webassets-cache
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend (when you add it)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local

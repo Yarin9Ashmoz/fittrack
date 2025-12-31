@@ -1,0 +1,1 @@
+"""Fittrack backend application package."""
