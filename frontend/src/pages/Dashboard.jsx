@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import { Users, CreditCard, Calendar, Activity } from 'lucide-react';
 import axios from 'axios';
 import './Dashboard.css';
+import { useNavigate } from 'react-router-dom';
 
 const StatCard = ({ icon, label, value, color }) => (
     <div className="stat-card glass">
@@ -23,6 +24,8 @@ const Dashboard = () => {
         subscriptions: 0,
         classes: 0
     });
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -92,9 +95,16 @@ const Dashboard = () => {
                 <div className="quick-actions glass">
                     <h3>Quick Actions</h3>
                     <div className="action-buttons">
-                        <button className="action-btn premium-gradient">Add New Member</button>
-                        <button className="action-btn glass">Create Workout Plan</button>
-                        <button className="action-btn glass">Schedule Class</button>
+                        <button className="action-btn premium-gradient"
+                            onClick={() => navigate('/add-member')}
+                        >Add New Member</button>
+
+                        <button className="action-btn glass"
+                            onClick={() => navigate('/create-workout-plan')}
+                        >Create Workout Plan</button>
+                        <button className="action-btn glass"
+                            onClick={() => navigate('/schedule-class')}
+                        >Schedule Class</button>
                     </div>
                 </div>
             </div>
