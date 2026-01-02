@@ -96,7 +96,7 @@ const Dashboard = () => {
                     <h3>Quick Actions</h3>
                     <div className="action-buttons">
                         <button className="action-btn premium-gradient"
-                            onClick={() => navigate('/add-member')}
+                            onClick={() => navigate('/users/create')}
                         >Add New Member</button>
 
                         <button className="action-btn glass"
