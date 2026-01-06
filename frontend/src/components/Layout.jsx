@@ -1,4 +1,5 @@
 import Sidebar from './Sidebar';
+import SearchBar from './SearchBar';
 import './Layout.css';
 
 const Layout = ({ children }) => {
@@ -7,9 +8,7 @@ const Layout = ({ children }) => {
             <Sidebar />
             <main className="main-content">
                 <header className="header">
-                    <div className="search-bar glass">
-                        <input type="text" placeholder="Search members, classes..." />
-                    </div>
+                    <SearchBar />
                     <div className="user-profile">
                         <div className="user-info">
                             <p className="user-name">Admin User</p>
@@ -18,6 +17,7 @@ const Layout = ({ children }) => {
                         <div className="avatar premium-gradient">JS</div>
                     </div>
                 </header>
+
                 <div className="page-content">
                     {children}
                 </div>

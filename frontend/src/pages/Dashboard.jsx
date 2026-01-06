@@ -5,6 +5,9 @@ import axios from 'axios';
 import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL 
+
+
 const StatCard = ({ icon, label, value, color }) => (
     <div className="stat-card glass">
         <div className={`icon-box ${color}`}>
@@ -31,10 +34,10 @@ const Dashboard = () => {
         const fetchStats = async () => {
             try {
                 const [usersRes, plansRes, subsRes, classesRes] = await Promise.all([
-                    axios.get('http://127.0.0.1:5001/users/'),
-                    axios.get('http://127.0.0.1:5001/plans/'),
-                    axios.get('http://127.0.0.1:5001/subscriptions/'),
-                    axios.get('http://127.0.0.1:5001/classes/')
+                    axios.get(`${API_URL}/subscriptions/`),
+                    axios.get(`${API_URL}/plans/`),
+                    axios.get(`${API_URL}/users/`),
+                    axios.get(`${API_URL}/classes/`)
                 ]);
 
                 setStats({
@@ -100,7 +103,7 @@ const Dashboard = () => {
                         >Add New Member</button>
 
                         <button className="action-btn glass"
-                            onClick={() => navigate('/create-workout-plan')}
+                            onClick={() => navigate('/workout-plan-create')}
                         >Create Workout Plan</button>
                         <button className="action-btn glass"
                             onClick={() => navigate('/schedule-class')}

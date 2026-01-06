@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../../components/Layout';
+const API_URL = import.meta.env.VITE_API_URL
 
 const UsersList = () => {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ const UsersList = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5001/users/');
+                const response = await axios.get(`${API_URL}/users/`);
                 setUsers(response.data);
             } catch (err) {
                 setError('Error fetching users');
@@ -31,10 +32,10 @@ const UsersList = () => {
         <Layout>
             <div style={{ maxWidth: 800, margin: '0 auto' }}>
                 <h2>Users List</h2>
-                <table className="users-table">
+                <table className="table table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th >ID</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>

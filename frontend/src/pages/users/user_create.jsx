@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../../components/Layout';
+const API_URL = import.meta.env.VITE_API_URL
 
 const UserCreate = () => {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ const UserCreate = () => {
 
         try {
             setLoading(true);
-            await axios.post('http://127.0.0.1:5001/users/', form);
+            await axios.post(`${API_URL}/users/`, form);
             navigate('/');
         } catch (err) {
             const msg = err.response?.data || err.message || 'Unknown error';

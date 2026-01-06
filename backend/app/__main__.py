@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 # Error classes
 from backend.app.exceptions import (
@@ -19,13 +20,12 @@ from backend.app.api.enrollments import enrollments_bp
 from backend.app.api.payments import payments_bp
 from backend.app.api.workout_plans import workout_plans_bp
 from backend.app.api.workout_items import workout_items_bp
+from backend.app.api.search import search_bp
 
-
-from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
-    CORS(app) # Enable CORS for all routes
+    CORS(app)
 
     # Register blueprints
     app.register_blueprint(users_bp)
@@ -37,6 +37,7 @@ def create_app():
     app.register_blueprint(payments_bp)
     app.register_blueprint(workout_plans_bp)
     app.register_blueprint(workout_items_bp)
+    app.register_blueprint(search_bp)
 
     # Error handlers
     @app.errorhandler(NotFoundError)
