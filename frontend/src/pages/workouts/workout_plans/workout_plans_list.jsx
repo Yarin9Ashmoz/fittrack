@@ -30,33 +30,35 @@ const WorkoutPlansList = () => {
 
     return (
         <Layout>
-            <h2>Workout Plans List</h2>
-            {plans.length === 0 ? (
-                <p>No workout plans found.</p>
-            ) : (
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Member ID</th>
-                            <th>Name</th>
-                            <th>Goal</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {plans.map(plan => (
-                            <tr key={plan.id}>
-                                <td>{plan.id}</td>
-                                <td>{plan.member_id}</td>
-                                <td>{plan.name}</td>
-                                <td>{plan.goal}</td>
-                                <td>{plan.status}</td>
+            <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+                <h2>Workout Plans List</h2>
+                {plans.length === 0 ? (
+                    <p>No workout plans found.</p>
+                ) : (
+                    <table className="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Member ID</th>
+                                <th>Title</th>
+                                <th>Created At</th>
+                                <th>Active</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
+                        </thead>
+                        <tbody>
+                            {plans.map(plan => (
+                                <tr key={plan.id}>
+                                    <td>{plan.id}</td>
+                                    <td>{plan.member_id}</td>
+                                    <td>{plan.title}</td>
+                                    <td>{plan.created_at}</td>
+                                    <td>{plan.is_active}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
         </Layout>
     );
 };

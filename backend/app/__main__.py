@@ -25,9 +25,13 @@ from backend.app.api.search import search_bp
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}})
+
 
     # Register blueprints
+    from backend.app.api.auth import auth_bp
+    app.register_blueprint(auth_bp)
+
     app.register_blueprint(users_bp)
     app.register_blueprint(plans_bp)
     app.register_blueprint(subscriptions_bp)
@@ -38,6 +42,7 @@ def create_app():
     app.register_blueprint(workout_plans_bp)
     app.register_blueprint(workout_items_bp)
     app.register_blueprint(search_bp)
+
 
     # Error handlers
     @app.errorhandler(NotFoundError)
@@ -60,9 +65,13 @@ def create_app():
     def handle_business_logic(e):
         return jsonify({"error": str(e)}), 400
 
+    @app.route("/health")
+    def health():
+        return jsonify({"status": "ok"}), 200
+
     return app
 
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True, port=5001)
+    app.run(host="0.0.0.0", port=5005, debug=False)

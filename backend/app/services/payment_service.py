@@ -1,64 +1,43 @@
-from backend.app.db.database import engine
-from backend.app.models.payment import payments
-from backend.app.models.subscription import subscriptions
+from backend.app.db.database import SessionLocal
+from backend.app.repositories.payment_repository import PaymentRepository
 from backend.app import exceptions
-from sqlalchemy import select, update
 
-
-def create_payment(data: dict):
-    subscription_id = data["subscription_id"]
-
-    with engine.connect() as conn:
-
-        sub = conn.execute(
-            select(subscriptions).where(subscriptions.c.id == subscription_id)
-        ).fetchone()
-
-        if not sub:
-            raise exceptions.NotFoundError("Subscription not found")
-
-        result = conn.execute(payments.insert().values(**data))
-        new_id = result.lastrowid
-
-        return get_payment_by_id(new_id)
-
+def create_payment(data):
+    with SessionLocal() as session:
+        return PaymentRepository(session).create(**data.dict())
 
 def get_payment_by_id(payment_id: int):
-    with engine.connect() as conn:
-        row = conn.execute(
-            select(payments).where(payments.c.id == payment_id)
-        ).fetchone()
-
-        if not row:
+    with SessionLocal() as session:
+        payment = PaymentRepository(session).get_by_id(payment_id)
+        if not payment:
             raise exceptions.NotFoundError("Payment not found")
-
-        return row
-
-
-def get_payment_by_member(member_id: int):
-    with engine.connect() as conn:
-        query = (
-            select(payments)
-            .select_from(payments.join(subscriptions))
-            .where(subscriptions.c.user_id == member_id)
-        )
-        return conn.execute(query).fetchall()
-
+        return payment
 
 def get_all_payments():
-    with engine.connect() as conn:
-        return conn.execute(select(payments)).fetchall()
+    with SessionLocal() as session:
+        return PaymentRepository(session).get_all()
 
-
+def get_payment_by_member(member_id: int):
+    with SessionLocal() as session:
+        return PaymentRepository(session).get_by_member(member_id)
 
 def cancel_payment(payment_id: int):
-    with engine.connect() as conn:
-        get_payment_by_id(payment_id)
+    with SessionLocal() as session:
+        repo = PaymentRepository(session)
+        if not repo.get_by_id(payment_id):
+            raise exceptions.NotFoundError("Payment not found")
+        return repo.update(payment_id, status="canceled")
 
-        conn.execute(
-            update(payments)
-            .where(payments.c.id == payment_id)
-            .values(status="canceled")
-        )
+def update_payment(payment_id: int, data):
+    with SessionLocal() as session:
+        update_data = {k: v for k, v in data.dict().items() if v is not None}
+        updated = PaymentRepository(session).update(payment_id, **update_data)
+        if not updated:
+            raise exceptions.NotFoundError("Payment not found")
+        return updated
 
-        return get_payment_by_id(payment_id)
+def delete_payment(payment_id: int):
+    with SessionLocal() as session:
+        if not PaymentRepository(session).delete(payment_id):
+            raise exceptions.NotFoundError("Payment not found")
+        return True

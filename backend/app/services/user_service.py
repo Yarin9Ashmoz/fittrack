@@ -1,62 +1,37 @@
-from backend.app.db.database import engine
-from backend.app.models.user import users
-from backend.app.exceptions import NotFoundError, DuplicateError
+from backend.app.db.database import SessionLocal
+from backend.app.repositories.user_repository import UserRepository
+from backend.app import exceptions
 
 def create_user(user_data):
-    with engine.connect() as conn:
-        query = users.select().where(users.c.email == user_data.email)
-        existing = conn.execute(query).fetchone()
-        if existing:
-            raise DuplicateError("Email already exists")
-
-        insert_query = users.insert().values(**user_data.dict())
-        result = conn.execute(insert_query)
-        user_id = result.lastrowid
-
-        return get_user_by_id(user_id)
-
+    with SessionLocal() as session:
+        repo = UserRepository(session)
+        if repo.get_by_email(user_data.email):
+            raise exceptions.DuplicateError("Email already registered")
+        
+        return repo.create(**user_data.dict())
 
 def get_user_by_id(user_id: int):
-    with engine.connect() as conn:
-        query = users.select().where(users.c.id == user_id)
-        user = conn.execute(query).fetchone()
-
+    with SessionLocal() as session:
+        user = UserRepository(session).get_by_id(user_id)
         if not user:
-            raise NotFoundError("User not found")
-
+            raise exceptions.NotFoundError("User not found")
         return user
 
-
 def get_all_users():
-    with engine.connect() as conn:
-        query = users.select()
-        return conn.execute(query).fetchall()
-
+    with SessionLocal() as session:
+        return UserRepository(session).get_all()
 
 def update_user(user_id: int, user_data):
-    with engine.connect() as conn:
-        user = get_user_by_id(user_id)
-
-        if user_data.email:
-            query = users.select().where(users.c.email == user_data.email)
-            existing = conn.execute(query).fetchone()
-
-            if existing and existing.id != user_id:
-                raise DuplicateError("Email already exists")
-
+    with SessionLocal() as session:
+        repo = UserRepository(session)
         update_data = {k: v for k, v in user_data.dict().items() if v is not None}
-
-        update_query = users.update().where(users.c.id == user_id).values(**update_data)
-        conn.execute(update_query)
-
-        return get_user_by_id(user_id)
-
+        updated = repo.update(user_id, **update_data)
+        if not updated:
+            raise exceptions.NotFoundError("User not found")
+        return updated
 
 def delete_user(user_id: int):
-    with engine.connect() as conn:
-        get_user_by_id(user_id)
-
-        delete_query = users.delete().where(users.c.id == user_id)
-        conn.execute(delete_query)
-
-        return {"message": "User deleted"}
+    with SessionLocal() as session:
+        if not UserRepository(session).delete(user_id):
+            raise exceptions.NotFoundError("User not found")
+        return True

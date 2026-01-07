@@ -14,10 +14,14 @@ from backend.app.services.plan_service import (
 from backend.app.exceptions import NotFoundError, ValidationError
 
 
+from backend.app.utils.security import roles_required, token_required
+
 plans_bp = Blueprint("plans", __name__, url_prefix="/plans")
 
 
 @plans_bp.post("/")
+@token_required
+@roles_required('admin')
 def create_plan_route():
     try:
         data = request.get_json()
@@ -30,12 +34,14 @@ def create_plan_route():
 
 
 @plans_bp.get("/")
+@token_required
 def get_all_plans_route():
     plans = get_all_plans()
     return jsonify([PlanResponseSchema.from_orm(p).dict() for p in plans]), 200
 
 
 @plans_bp.get("/<int:plan_id>")
+@token_required
 def get_plan_route(plan_id):
     try:
         plan = get_plan_by_id(plan_id)
@@ -46,6 +52,8 @@ def get_plan_route(plan_id):
 
 
 @plans_bp.put("/<int:plan_id>")
+@token_required
+@roles_required('admin')
 def update_plan_route(plan_id):
     try:
         data = request.get_json()
@@ -60,6 +68,8 @@ def update_plan_route(plan_id):
 
 
 @plans_bp.delete("/<int:plan_id>")
+@token_required
+@roles_required('admin')
 def delete_plan_route(plan_id):
     try:
         delete_plan(plan_id)

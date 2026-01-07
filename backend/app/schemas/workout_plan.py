@@ -5,13 +5,13 @@ class WorkoutPlanCreateSchema(BaseModel):
     member_id: int
     trainer_id: int | None = None
     title: str
-    is_active: int | None = 1
+    is_active: bool | None = True
 
 class WorkoutPlanUpdateSchema(BaseModel):
     member_id: int | None = None
     trainer_id: int | None = None
     title: str | None = None
-    is_active: int | None = None
+    is_active: bool | None = True
 
 class WorkoutPlanResponseSchema(BaseModel):
     id: int
@@ -19,7 +19,7 @@ class WorkoutPlanResponseSchema(BaseModel):
     trainer_id: int
     title: str
     created_at: datetime
-    is_active: int
+    is_active: bool
 
     model_config = {"from_attributes": True}
 

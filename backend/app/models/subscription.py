@@ -1,17 +1,17 @@
-from sqlalchemy import Table, Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Float
 from sqlalchemy.sql import func
-from backend.app.db.database import metadata
+from backend.app.db.database import Base
 
-subscriptions = Table(
-    "subscriptions",
-    metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("user_id", Integer, ForeignKey("users.id"), nullable=False),
-    Column("plan_id", Integer, ForeignKey("plans.id"), nullable=False),
-    Column("status", String(20), nullable=False, default="active"),
-    Column("start_date", Date, nullable=False),
-    Column("end_date", Date, nullable=False),
-    Column("remaining_entries", Integer, nullable=True),
-    Column("frozen_until", Date, nullable=True),
-    Column("created_at", Date, server_default=func.now())
-)
+class Subscription(Base):
+    __tablename__ = "subscriptions"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    plan_id = Column(Integer, ForeignKey("plans.id"), nullable=False)
+    status = Column(String(20), nullable=False, default="active")
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+    remaining_entries = Column(Integer, nullable=True)
+    frozen_until = Column(Date, nullable=True)
+    debt = Column(Float, nullable=False, default=0.0)
+    created_at = Column(Date, server_default=func.now())

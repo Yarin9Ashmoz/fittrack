@@ -1,13 +1,10 @@
-from sqlalchemy import Table, Column, Integer, String, ForeignKey
-from backend.app.db.database import metadata
+from sqlalchemy import Column, Integer, String
+from backend.app.db.database import Base
 
-workout_items = Table(
-    "exercise", metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("plan_id", Integer, ForeignKey("workout_plans.id"), nullable=False),
-    Column("exercise_name", String(50), nullable=False),
-    Column("sets", Integer, nullable=False),
-    Column("reps", Integer, nullable=False),
-    Column("target_weight", Integer, nullable=True),
-    Column("notes", String(255), nullable=True)
-)
+class Exercise(Base):
+    __tablename__ = "exercises"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False, unique=True)
+    description = Column(String(255), nullable=True)
+    category = Column(String(50), nullable=True)

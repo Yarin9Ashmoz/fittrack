@@ -1,50 +1,31 @@
-from backend.app.db.database import engine
-from backend.app.models.class_session import class_sessions
+from backend.app.db.database import SessionLocal
+from backend.app.repositories.class_session_repository import ClassSessionRepository
 from backend.app import exceptions
-from sqlalchemy import select, update, delete
-
 
 def create_class(data: dict):
-    with engine.connect() as conn:
-        insert_query = class_sessions.insert().values(**data)
-        result = conn.execute(insert_query)
-        new_id = result.lastrowid
-        return get_class_by_id(new_id)
+    with SessionLocal() as session:
+        return ClassSessionRepository(session).create(**data)
 
-
-def get_all_classes():
-    with engine.connect() as conn:
-        query = select(class_sessions)
-        return conn.execute(query).fetchall()
-
-
-def get_class_by_id(class_id: int):
-    with engine.connect() as conn:
-        query = select(class_sessions).where(class_sessions.c.id == class_id)
-        row = conn.execute(query).fetchone()
-
+def get_class_by_id(session_id: int):
+    with SessionLocal() as session:
+        row = ClassSessionRepository(session).get_by_id(session_id)
         if not row:
-            raise exceptions.NotFoundError("Class not found")
-
+            raise exceptions.NotFoundError("Class session not found")
         return row
 
+def get_all_classes():
+    with SessionLocal() as session:
+        return ClassSessionRepository(session).get_all()
 
-def update_class(class_id: int, data: dict):
-    with engine.connect() as conn:
-        get_class_by_id(class_id)
+def update_class(session_id: int, data: dict):
+    with SessionLocal() as session:
+        updated = ClassSessionRepository(session).update(session_id, **data)
+        if not updated:
+            raise exceptions.NotFoundError("Class session not found")
+        return updated
 
-        update_query = (
-            update(class_sessions)
-            .where(class_sessions.c.id == class_id)
-            .values(**data)
-        )
-        conn.execute(update_query)
-
-        return get_class_by_id(class_id)
-
-
-def delete_class(class_id: int):
-    with engine.connect() as conn:
-        get_class_by_id(class_id)
-        delete_query = delete(class_sessions).where(class_sessions.c.id == class_id)
-        conn.execute(delete_query)
+def delete_class(session_id: int):
+    with SessionLocal() as session:
+        if not ClassSessionRepository(session).delete(session_id):
+            raise exceptions.NotFoundError("Class session not found")
+        return True

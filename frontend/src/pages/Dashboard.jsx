@@ -5,7 +5,7 @@ import axios from 'axios';
 import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL = import.meta.env.VITE_API_URL 
+const API_URL = import.meta.env.VITE_API_URL
 
 
 const StatCard = ({ icon, label, value, color }) => (
@@ -106,7 +106,7 @@ const Dashboard = () => {
                             onClick={() => navigate('/workout-plan/create')}
                         >Create Workout Plan</button>
                         <button className="action-btn glass"
-                            onClick={() => navigate('/schedule-class')}
+                            onClick={() => navigate('/classes/create')}
                         >Schedule Class</button>
                     </div>
                 </div>

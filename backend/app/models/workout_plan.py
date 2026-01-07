@@ -1,13 +1,14 @@
-from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.sql import func
-from backend.app.db.database import metadata
+from backend.app.db.database import Base
 
-workout_plans = Table(
-    "workout_plans", metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("member_id", Integer, ForeignKey("users.id"), nullable=False),
-    Column("trainer_id", Integer, ForeignKey("users.id"), nullable=False),
-    Column("title", String(100), nullable=False),
-    Column("created_at", DateTime, server_default=func.now()),
-    Column("is_active", Integer, nullable=False, default=1)  # 1 = active, 0 = archived
-)
+class WorkoutPlan(Base):
+    __tablename__ = "workout_plans"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    member_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    trainer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String(100), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    is_active = Column(Boolean, nullable=False, default=True)
+

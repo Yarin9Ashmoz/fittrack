@@ -30,7 +30,7 @@ const UsersList = () => {
 
     return (
         <Layout>
-            <div style={{ maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ maxWidth: 1000, margin: '0 auto' }}>
                 <h2>Users List</h2>
                 <table className="table table-striped">
                     <thead>

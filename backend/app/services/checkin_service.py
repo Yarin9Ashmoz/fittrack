@@ -1,49 +1,57 @@
-from backend.app.db.database import engine
-from backend.app.models.checkin import checkins
+from backend.app.db.database import SessionLocal
+from backend.app.repositories.checkin_repository import CheckinRepository
+from backend.app.repositories.subscription_repository import SubscriptionRepository
+from backend.app.repositories.enrollment_repository import EnrollmentRepository
 from backend.app import exceptions
-from datetime import datetime
-from backend.app.services.subscription_service import (
-    get_active_subscription,
-    update_remaining_entries
-)
 
-def create_checkin(member_id: int, class_id: int):
-    with engine.connect() as conn:
-        sub = get_active_subscription(member_id)
+def create_checkin(member_id: int, class_id: int = None):
+    with SessionLocal() as session:
+        checkin_repo = CheckinRepository(session)
+        sub_repo = SubscriptionRepository(session)
+        enroll_repo = EnrollmentRepository(session)
+
+        # 1. Validate Active Subscription
+        sub = sub_repo.get_active_by_user(member_id)
         if not sub:
-            raise exceptions.BusinessLogicError("No active subscription found for member")
+            raise exceptions.BusinessLogicError("No active subscription found")
+        
         if sub.status == "frozen":
             raise exceptions.BusinessLogicError("Subscription is frozen")
+
+        # 2. Validate Debt
+        if sub.debt > 0:
+            raise exceptions.BusinessLogicError(f"Cannot check-in: Member has outstanding debt of {sub.debt}")
+
+        # 3. Validate Remaining Entries
         if sub.remaining_entries is not None:
             if sub.remaining_entries <= 0:
                 raise exceptions.BusinessLogicError("No remaining entries left")
-            update_remaining_entries(sub.id, sub.remaining_entries -1)
+            sub_repo.update(sub.id, remaining_entries=sub.remaining_entries - 1)
 
-        insert_query = checkins.insert().values(
+        # 4. Validate Class Enrollment (if applicable)
+        if class_id:
+            enrollments = enroll_repo.get_active_by_class(class_id)
+            is_enrolled = any(e.member_id == member_id for e in enrollments)
+            if not is_enrolled:
+                raise exceptions.BusinessLogicError("Member is not actively enrolled in this class session")
+
+        # 5. Create Check-in
+        return checkin_repo.create(
             member_id=member_id,
             subscription_id=sub.id,
             class_id=class_id
         )
-        result = conn.execute(insert_query)
-        checkin_id = result.lastrowid
-        return get_checkin_by_id(checkin_id)
 
 def get_checkin_by_id(checkin_id: int):
-    with engine.connect() as conn:
-        query = checkins.select().where(checkins.c.id == checkin_id)
-        row = conn.execute(query).fetchone()
-        if not row:
-            raise exceptions.NotFoundError("Check-in not found")
-        return row
+    with SessionLocal() as session:
+        return CheckinRepository(session).get_by_id(checkin_id)
 
 def get_checkins_by_member(member_id: int):
-    with engine.connect() as conn:
-        query = checkins.select().where(checkins.c.member_id == member_id)
-        return conn.execute(query).fetchall()
-
+    with SessionLocal() as session:
+        repo = CheckinRepository(session)
+        return session.query(repo.model).filter(repo.model.member_id == member_id).all()
 
 def get_all_checkins():
-    with engine.connect() as conn:
-        query = checkins.select()
-        return conn.execute(query).fetchall()
+    with SessionLocal() as session:
+        return CheckinRepository(session).get_all()
 

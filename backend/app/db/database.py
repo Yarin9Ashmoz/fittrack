@@ -5,12 +5,10 @@ from sqlalchemy.orm import declarative_base
 DB_NAME = "fittrack"
 
 Base = declarative_base()
-metadata = Base.metadata
 
 def get_db_config():
     import os
     config = configparser.ConfigParser()
-    # Get path relative to this file
     config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config.ini")
     config.read(config_path)
     return {
@@ -22,44 +20,42 @@ def get_db_config():
 def get_server_engine():
     db = get_db_config()
     server_url = f"mysql+pymysql://{db['user']}:{db['password']}@{db['host']}"
-    return create_engine(server_url, echo=True, future=True)
+    return create_engine(server_url, echo=False, future=True)
 
 def create_database_if_not_exists():
     engine = get_server_engine()
     with engine.connect() as conn:
         conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}"))
-        print(f"Database '{DB_NAME}' created (or already exists).")
+        conn.commit()
 
 def get_engine():
     create_database_if_not_exists()
     db = get_db_config()
     db_url = f"mysql+pymysql://{db['user']}:{db['password']}@{db['host']}/{DB_NAME}"
-    return create_engine(db_url, echo=True, future=True)
+    return create_engine(db_url, echo=False, future=True)
 
 engine = get_engine()
 
-# Imports moved to create_all_tables to avoid circular dependency
+from sqlalchemy.orm import sessionmaker
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def create_all_tables(drop_first=False):
-    # Import models here to ensure they are registered with metadata
-    from backend.app.models import (
-        user,
-        workout_plan,
-        workout_item,
-        subscription,
-        payment,
-        enrollment,
-        checkin,
-        class_session,
-        plan,
-        exercise,
-    )
+    from backend.app.models.user import User
+    from backend.app.models.plan import Plan
+    from backend.app.models.subscription import Subscription
+    from backend.app.models.class_session import ClassSession
+    from backend.app.models.enrollment import Enrollment
+    from backend.app.models.payment import Payment
+    from backend.app.models.checkin import Checkin
+    from backend.app.models.exercise import Exercise
+    from backend.app.models.workout_plan import WorkoutPlan
+    from backend.app.models.workout_item import WorkoutItem
+    
     if drop_first:
-        print("Dropping all tables...")
         Base.metadata.drop_all(engine)
     
     Base.metadata.create_all(engine)
-    print("All tables created.")
+
 
 def get_connection():
     return engine.connect()

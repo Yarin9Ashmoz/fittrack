@@ -1,13 +1,23 @@
-from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey, text
-from backend.app.db.database import metadata
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Boolean
+from sqlalchemy.orm import relationship
+from backend.app.db.database import Base
 
-class_sessions = Table(
-    "class_sessions",
-    metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("title", String(100), nullable=False),
-    Column("starts_at", DateTime, nullable=False),
-    Column("capacity", Integer, nullable=False),
-    Column("trainer_id", Integer, ForeignKey("users.id"), nullable=False),
-    Column("status", String(20), nullable=False, server_default=text("'active'"))
-)
+class ClassSession(Base):
+    __tablename__ = "class_sessions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(100), nullable=False)
+    starts_at = Column(DateTime, nullable=False)
+    ends_at = Column(DateTime, nullable=False)  # ← לא nullable
+    capacity = Column(Integer, nullable=False)
+    trainer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    status = Column(
+        Enum("open", "full", "closed", "canceled", name="class_status"),
+        nullable=False,
+        server_default="open"
+    )
+
+    is_registration_closed = Column(Boolean, nullable=False, server_default="false")
+
+    enrollments = relationship("Enrollment", back_populates="class_session")

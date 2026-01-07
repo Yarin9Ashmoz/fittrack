@@ -1,15 +1,12 @@
-from sqlalchemy import (
-    Table, Column, Integer, String, DateTime, ForeignKey
-)
+from sqlalchemy import Column, Integer, DateTime, ForeignKey
 from sqlalchemy.sql import func
-from backend.app.db.database import metadata
+from backend.app.db.database import Base
 
-checkins = Table(
-    "checkins", metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("member_id", Integer, ForeignKey("users.id"), nullable=False),
-    Column("subscription_id", Integer, ForeignKey("subscriptions.id"), nullable=False),
-    Column("class_id", Integer, ForeignKey("class_sessions.id"), nullable=True),
-    Column("timestamp", DateTime, server_default=func.now())
-)
-
+class Checkin(Base):
+    __tablename__ = "checkins"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    member_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    subscription_id = Column(Integer, ForeignKey("subscriptions.id"), nullable=False)
+    class_id = Column(Integer, ForeignKey("class_sessions.id"), nullable=True)
+    timestamp = Column(DateTime, server_default=func.now())

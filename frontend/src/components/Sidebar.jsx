@@ -6,9 +6,9 @@ const Sidebar = () => {
     const menuItems = [
         { icon: <Home size={22} />, label: 'Dashboard', path: '/' },
         { icon: <Users size={22} />, label: 'Members', path: '/users/list' },
-        { icon: <Calendar size={22} />, label: 'Schedule', path: '/schedule' },
+        { icon: <Calendar size={22} />, label: 'Schedule', path: '/classes/list' },
         { icon: <Dumbbell size={22} />, label: 'Workouts', path: '/workout-plans/list' },
-        { icon: <CreditCard size={22} />, label: 'Payments', path: '/payments' },
+        { icon: <CreditCard size={22} />, label: 'Payments', path: '/payments/list' },
     ];
 
     return (

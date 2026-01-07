@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
-from sqlalchemy import select, or_
-from backend.app.db.database import engine
-from backend.app.models.user import users
-from backend.app.models.plan import plans
-from backend.app.models.class_session import class_sessions
+from sqlalchemy import or_
+from backend.app.db.database import SessionLocal
+from backend.app.models.user import User
+from backend.app.models.plan import Plan
+from backend.app.models.class_session import ClassSession
 
 search_bp = Blueprint("search", __name__)
 
@@ -16,20 +16,16 @@ def search_route():
 
     results = []
 
-    with engine.connect() as conn:
-
-        user_query = (
-            select(users)
-            .where(
-                or_(
-                    users.c.first_name.ilike(f"%{query}%"),
-                    users.c.last_name.ilike(f"%{query}%"),
-                    users.c.email.ilike(f"%{query}%"),
-                    users.c.phone.ilike(f"%{query}%"),
-                )
+    with SessionLocal() as session:
+        # User Search
+        user_rows = session.query(User).filter(
+            or_(
+                User.first_name.ilike(f"%{query}%"),
+                User.last_name.ilike(f"%{query}%"),
+                User.email.ilike(f"%{query}%"),
+                User.phone.ilike(f"%{query}%")
             )
-        )
-        user_rows = conn.execute(user_query).fetchall()
+        ).all()
 
         for u in user_rows:
             results.append({
@@ -40,11 +36,10 @@ def search_route():
                 "phone": u.phone,
             })
 
-        class_query = (
-            select(class_sessions)
-            .where(class_sessions.c.title.ilike(f"%{query}%"))
-        )
-        class_rows = conn.execute(class_query).fetchall()
+        # Class Search
+        class_rows = session.query(ClassSession).filter(
+            ClassSession.title.ilike(f"%{query}%")
+        ).all()
 
         for c in class_rows:
             results.append({
@@ -53,11 +48,10 @@ def search_route():
                 "class_name": c.title,
             })
 
-        plan_query = (
-            select(plans)
-            .where(plans.c.name.ilike(f"%{query}%"))
-        )
-        plan_rows = conn.execute(plan_query).fetchall()
+        # Plan Search
+        plan_rows = session.query(Plan).filter(
+            Plan.name.ilike(f"%{query}%")
+        ).all()
 
         for p in plan_rows:
             results.append({
