@@ -103,7 +103,7 @@ const Dashboard = () => {
                         >Add New Member</button>
 
                         <button className="action-btn glass"
-                            onClick={() => navigate('/workout-plan-create')}
+                            onClick={() => navigate('/workout-plan/create')}
                         >Create Workout Plan</button>
                         <button className="action-btn glass"
                             onClick={() => navigate('/schedule-class')}

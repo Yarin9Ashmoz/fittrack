@@ -7,7 +7,7 @@ const Sidebar = () => {
         { icon: <Home size={22} />, label: 'Dashboard', path: '/' },
         { icon: <Users size={22} />, label: 'Members', path: '/users/list' },
         { icon: <Calendar size={22} />, label: 'Schedule', path: '/schedule' },
-        { icon: <Dumbbell size={22} />, label: 'Workouts', path: '/workouts' },
+        { icon: <Dumbbell size={22} />, label: 'Workouts', path: '/workout-plans/list' },
         { icon: <CreditCard size={22} />, label: 'Payments', path: '/payments' },
     ];
 
