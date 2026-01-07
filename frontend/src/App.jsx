@@ -25,6 +25,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 import ClassSessionCreate from './pages/classes/class_session_create';
 import ClassSessionsList from './pages/classes/class_sessions_list';
+import ClassSessionView from './pages/classes/class_session_view';
+
 import PaymentsList from './pages/payments/payments_list';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -66,6 +68,7 @@ function App() {
 
                         <Route path="/classes/create" element={<PrivateRoute><ClassSessionCreate /></PrivateRoute>} />
                         <Route path="/classes/list" element={<PrivateRoute><ClassSessionsList /></PrivateRoute>} />
+                        <Route path="/classes/:classId" element={<PrivateRoute><ClassSessionView /></PrivateRoute>} />
 
                         <Route path="/payments/list" element={<PrivateRoute><PaymentsList /></PrivateRoute>} />
 

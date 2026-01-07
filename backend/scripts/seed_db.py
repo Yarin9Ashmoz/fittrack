@@ -103,25 +103,57 @@ def seed_subscriptions(session, user_ids, plan_ids):
     return all_subs
 
 
+from datetime import timedelta
+
 def seed_classes(session, user_ids):
-    """Seed class sessions."""
     print("🏋️ Seeding class sessions...")
     today = date.today()
-    
-    # Corrected fields: starts_at (not start_time), remove duration/minutes if not in model (verified not in model)
+
+    def at(day_offset, hour):
+        return datetime.combine(
+            today + timedelta(days=day_offset),
+            datetime.min.time().replace(hour=hour)
+        )
+
     classes = [
-        ClassSession(title="Morning Yoga", starts_at=datetime.combine(today + timedelta(days=1), datetime.min.time().replace(hour=7)), capacity=15, trainer_id=user_ids["sara@example.com"], status="scheduled"),
-        ClassSession(title="CrossFit", starts_at=datetime.combine(today + timedelta(days=1), datetime.min.time().replace(hour=18)), capacity=20, trainer_id=user_ids["david@example.com"], status="scheduled"),
-        ClassSession(title="Pilates", starts_at=datetime.combine(today + timedelta(days=2), datetime.min.time().replace(hour=9)), capacity=12, trainer_id=user_ids["sara@example.com"], status="scheduled"),
-        ClassSession(title="Strength Training", starts_at=datetime.combine(today + timedelta(days=2), datetime.min.time().replace(hour=19)), capacity=15, trainer_id=user_ids["david@example.com"], status="scheduled"),
+        ClassSession(
+            title="Morning Yoga",
+            starts_at=at(1, 7),
+            ends_at=at(1, 8),  # ✅ +1 hour
+            capacity=15,
+            trainer_id=user_ids["sara@example.com"],
+            status="scheduled",
+        ),
+        ClassSession(
+            title="CrossFit",
+            starts_at=at(1, 18),
+            ends_at=at(1, 19),
+            capacity=20,
+            trainer_id=user_ids["david@example.com"],
+            status="scheduled",
+        ),
+        ClassSession(
+            title="Pilates",
+            starts_at=at(2, 9),
+            ends_at=at(2, 10),
+            capacity=12,
+            trainer_id=user_ids["sara@example.com"],
+            status="scheduled",
+        ),
+        ClassSession(
+            title="Strength Training",
+            starts_at=at(2, 19),
+            ends_at=at(2, 20),
+            capacity=15,
+            trainer_id=user_ids["david@example.com"],
+            status="scheduled",
+        ),
     ]
-    
+
     session.add_all(classes)
     session.commit()
-    
-    all_classes = session.query(ClassSession).all()
     print(f"✅ Created {len(classes)} class sessions")
-    return all_classes
+    return classes
 
 
 def seed_enrollments(session, user_ids, classes):

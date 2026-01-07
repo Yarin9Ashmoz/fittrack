@@ -1,6 +1,36 @@
 # Fittrack - Gym Management System
 
-A comprehensive gym management system built with Flask (backend) and modern web technologies.
+Quick Start for Evaluators
+
+1. Clone:
+   bash: git clone <repo-url> && cd fittrack
+2. Python env & deps:
+   bash: python3.10 -m venv .venv
+   bash: source .venv/bin/activate
+   bash: pip install --upgrade pip
+   bash: pip install -r requirements.txt
+3. Configure DB: edit backend/config.ini (MySQL). (editor)
+4. Initialize DB:
+   bash: ./init_db.sh
+   # or
+   bash: PYTHONPATH=. python -m backend.scripts.init_db
+5. Run backend (from project root):
+   bash: PYTHONPATH=. python -m backend.app
+6. Frontend (separate terminal):
+   bash: cd frontend
+   bash: cp .env.example .env
+   bash: npm install
+   bash: npm run dev
+7. Tests (optional):
+   bash: pytest backend/tests/ -q
+   bash: cd frontend && npm test
+
+Notes: run commands from project root; ensure MySQL is running; if you see "No module named 'backend'" use PYTHONPATH=.
+
+## when backend and front end are running open web app here: http://localhost:3000/login
+
+Email: admin@example.com
+Password: password123
 
 ## Project Structure
 
@@ -18,8 +48,73 @@ fittrack/
 │   │   └── db/          # Database configuration
 │   ├── tests/           # Unit tests
 │   └── scripts/         # Utility scripts
-└── frontend/            # Frontend application (to be implemented)
+└── frontend/            # Frontend application
+    ├── src/
+    │   ├── components/  # Reusable UI components (buttons, inputs, modals...)
+    │   ├── pages/       # Top-level pages or route components
+    │   ├── routes/      # Route definitions (react-router / router)
+    │   ├── services/    # API client (axios/fetch wrappers), auth helpers
+    │   ├── hooks/       # Custom React hooks
+    │   ├── store/       # State management (Redux / Zustand / Context)
+    │   ├── styles/      # Global styles, theme, CSS variables
+    │   ├── assets/      # Images, fonts, icons
+    │   ├── utils/       # Helpers, validators, constants
+    │   └── types/       # TypeScript types (if using TS)
+    ├── public/          # Static assets served as-is
+    ├── tests/           # Frontend tests (Vitest/Jest + React Testing Library)
+    ├── package.json
+    ├── vite.config.js   # or next.config.js / webpack.config.js
+    └── .env.example     # Example env vars (e.g. VITE_API_URL)
 ```
+
+## Frontend - Setup & Run
+
+Prerequisites:
+
+- Node.js 18+ (LTS recommended)
+- npm / yarn / pnpm
+
+Install and run:
+
+```bash
+cd frontend
+# install deps
+npm install   # or yarn / pnpm install
+
+# copy env and set backend URL
+cp .env.example .env
+# edit .env: set VITE_API_URL or NEXT_PUBLIC_API_URL -> http://localhost:5000
+
+# start dev server
+npm run dev   # or npm run start
+
+# build for production
+npm run build
+npm run preview  # or npm run serve
+
+# run tests
+npm test
+```
+
+Dev tips:
+
+- If using Vite, add a dev proxy in vite.config.js so requests to /api are forwarded to the backend:
+
+```js
+// vite.config.js (dev server proxy example)
+server: {
+  proxy: {
+    '/api': {
+      target: 'http://localhost:5000',
+      changeOrigin: true,
+      secure: false
+    }
+  }
+}
+```
+
+- Run backend and frontend in separate terminals or use a tool like `concurrently` / `npm-run-all` to run both.
+- Keep frontend .env values out of source control; commit only .env.example.
 
 ## Prerequisites
 
@@ -67,6 +162,7 @@ The server will start at `http://127.0.0.1:5000`
 ## API Endpoints
 
 ### Users
+
 - `GET /` - List all users
 - `POST /` - Create new user
 - `GET /<id>` - Get user by ID
@@ -74,6 +170,7 @@ The server will start at `http://127.0.0.1:5000`
 - `DELETE /<id>` - Delete user
 
 ### Plans
+
 - `GET /plans/` - List all plans
 - `POST /plans/` - Create new plan
 - `GET /plans/<id>` - Get plan by ID
@@ -81,6 +178,7 @@ The server will start at `http://127.0.0.1:5000`
 - `DELETE /plans/<id>` - Delete plan
 
 ### Subscriptions
+
 - `GET /subscriptions/` - List all subscriptions
 - `POST /subscriptions/` - Create new subscription
 - `GET /subscriptions/<id>` - Get subscription by ID
@@ -90,6 +188,7 @@ The server will start at `http://127.0.0.1:5000`
 - `PUT /subscriptions/<id>/renew` - Renew subscription
 
 ### Classes
+
 - `GET /classes/` - List all classes
 - `POST /classes/` - Create new class
 - `GET /classes/<id>` - Get class by ID
@@ -97,6 +196,7 @@ The server will start at `http://127.0.0.1:5000`
 - `DELETE /classes/<id>` - Delete class
 
 ### Enrollments
+
 - `GET /enrollments/` - List all enrollments
 - `POST /enrollments/` - Create new enrollment
 - `GET /enrollments/class/<class_id>` - Get enrollments by class
@@ -104,11 +204,13 @@ The server will start at `http://127.0.0.1:5000`
 - `DELETE /enrollments/<id>` - Cancel enrollment
 
 ### Check-ins
+
 - `GET /checkins/` - List all check-ins
 - `POST /checkins/` - Create new check-in
 - `GET /checkins/member/<member_id>` - Get member's check-in history
 
 ### Payments
+
 - `GET /payments/` - List all payments
 - `POST /payments/` - Create new payment
 - `GET /payments/<id>` - Get payment by ID
@@ -116,6 +218,7 @@ The server will start at `http://127.0.0.1:5000`
 - `DELETE /payments/<id>` - Cancel payment
 
 ### Workout Plans
+
 - `GET /workout-plans/` - List all workout plans
 - `POST /workout-plans/` - Create new workout plan
 - `GET /workout-plans/<id>` - Get workout plan by ID
@@ -125,6 +228,7 @@ The server will start at `http://127.0.0.1:5000`
 - `GET /workout-plans/<id>/exercises` - Get exercises for a plan
 
 ### Workout Items
+
 - `GET /workout-items/` - List all workout items
 - `POST /workout-items/` - Create new workout item
 - `GET /workout-items/<id>` - Get workout item by ID
@@ -160,12 +264,14 @@ PYTHONPATH=. python -m backend.app
 ## Development
 
 ### Running Tests
+
 ```bash
 source backend/venv/bin/activate
 pytest backend/tests/
 ```
 
 ### Code Structure
+
 - **API Layer** (`backend/app/api/`): HTTP endpoints and request/response handling
 - **Service Layer** (`backend/app/services/`): Business logic
 - **Repository Layer** (`backend/app/repositories/`): Database operations (to be implemented)
@@ -175,14 +281,17 @@ pytest backend/tests/
 ## Troubleshooting
 
 ### "No module named 'backend'"
+
 Make sure you're running from the project root directory and using `PYTHONPATH=.`
 
 ### Database connection errors
+
 - Verify MySQL is running
 - Check credentials in `backend/config.ini`
 - Ensure the fittrack database exists (run `./init_db.sh`)
 
 ### Port 5000 already in use
+
 - Stop other applications using port 5000 (like AirPlay on macOS)
 - Or modify the port in `backend/app/__main__.py`
 

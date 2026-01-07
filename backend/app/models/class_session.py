@@ -13,11 +13,19 @@ class ClassSession(Base):
     trainer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     status = Column(
-        Enum("open", "full", "closed", "canceled", name="class_status"),
+        Enum(
+            "scheduled",
+            "open",
+            "full",
+            "closed",
+            "canceled",
+            name="class_status",
+        ),
         nullable=False,
-        server_default="open"
+        server_default="scheduled",
     )
 
-    is_registration_closed = Column(Boolean, nullable=False, server_default="false")
+
+    is_registration_closed = Column(Boolean, nullable=False, server_default="0")
 
     enrollments = relationship("Enrollment", back_populates="class_session")
