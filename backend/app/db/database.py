@@ -51,10 +51,16 @@ def create_all_tables(drop_first=False):
     from backend.app.models.workout_plan import WorkoutPlan
     from backend.app.models.workout_item import WorkoutItem
     
+    # New feature models
+    from backend.app.models.intake_evaluation import IntakeEvaluation
+    from backend.app.models.personal_tracking import PersonalTracking
+    from backend.app.models.error_report import ErrorReport
+    
     if drop_first:
         Base.metadata.drop_all(engine)
     
     Base.metadata.create_all(engine)
+    print("All tables created successfully, including new feature tables.")
 
 
 def get_connection():

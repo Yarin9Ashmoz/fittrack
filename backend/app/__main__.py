@@ -21,6 +21,9 @@ from backend.app.api.payments import payments_bp
 from backend.app.api.workout_plans import workout_plans_bp
 from backend.app.api.workout_items import workout_items_bp
 from backend.app.api.search import search_bp
+from backend.app.api.intake_evaluations import intake_evaluations_bp
+from backend.app.api.personal_tracking import personal_tracking_bp
+from backend.app.api.error_reports import error_reports_bp
 
 
 def create_app():
@@ -42,6 +45,11 @@ def create_app():
     app.register_blueprint(workout_plans_bp)
     app.register_blueprint(workout_items_bp)
     app.register_blueprint(search_bp)
+    
+    # New feature blueprints
+    app.register_blueprint(intake_evaluations_bp)
+    app.register_blueprint(personal_tracking_bp)
+    app.register_blueprint(error_reports_bp)
 
 
     # Error handlers

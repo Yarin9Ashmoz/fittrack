@@ -15,14 +15,19 @@ from backend.app.models.checkin import Checkin
 from backend.app.models.payment import Payment
 from backend.app.models.workout_plan import WorkoutPlan
 from backend.app.models.workout_item import WorkoutItem
+from backend.app.models.intake_evaluation import IntakeEvaluation
+from backend.app.models.personal_tracking import PersonalTracking
+from backend.app.models.error_report import ErrorReport
 import bcrypt
+import json
 
 def clear_all_tables():
     """Clear all existing data from tables and reset auto-increment."""
     print("🧹 Clearing existing data and resetting IDs...")
     tables = [
         "checkins", "workout_items", "workout_plans", "payments", 
-        "enrollments", "class_sessions", "subscriptions", "plans", "users"
+        "enrollments", "class_sessions", "subscriptions", "plans", "users",
+        "personal_tracking", "intake_evaluations", "error_reports"
     ]
     with engine.connect() as conn:
         conn.execute(text("SET FOREIGN_KEY_CHECKS = 0;"))
@@ -46,8 +51,8 @@ def seed_users(session):
 
     sample_users = [
         User(first_name="יוסי", last_name="כהן", email="yossi@example.com", phone="050-1234567", role="admin", status="active", address="TLV", national_id="100000001", password_hash=hash_pw("password123")),
-        User(first_name="שרה", last_name="לוי", email="sara@example.com", phone="052-2345678", role="coach", status="active", address="Haifa", national_id="100000002", password_hash=hash_pw("password123")),
-        User(first_name="דוד", last_name="ישראלי", email="david@example.com", phone="053-3456789", role="coach", status="active", address="Jerusalem", national_id="100000003", password_hash=hash_pw("password123")),
+        User(first_name="שרה", last_name="לוי", email="sara@example.com", phone="052-2345678", role="trainer", status="active", address="Haifa", national_id="100000002", password_hash=hash_pw("password123")),
+        User(first_name="דוד", last_name="ישראלי", email="david@example.com", phone="053-3456789", role="trainer", status="active", address="Jerusalem", national_id="100000003", password_hash=hash_pw("password123")),
         User(first_name="מיכל", last_name="אברהם", email="michal@example.com", phone="054-4567890", role="member", status="active", address="Eilat", national_id="100000004", password_hash=hash_pw("password123")),
         User(first_name="רון", last_name="מזרחי", email="ron@example.com", phone="055-5678901", role="member", status="active", address="Ashdod", national_id="100000005", password_hash=hash_pw("password123")),
         User(first_name="נועה", last_name="כהן", email="noa@example.com", phone="050-6789012", role="member", status="active", address="Holo", national_id="100000006", password_hash=hash_pw("password123")),
@@ -167,6 +172,9 @@ def seed_enrollments(session, user_ids, classes):
         Enrollment(member_id=user_ids["noa@example.com"], class_id=classes[1].id, status="active"),
         Enrollment(member_id=user_ids["michal@example.com"], class_id=classes[2].id, status="active"),
         Enrollment(member_id=user_ids["ron@example.com"], class_id=classes[3].id, status="active"),
+        # Waitlist entries
+        Enrollment(member_id=user_ids["eli@example.com"], class_id=classes[0].id, status="waitlist", waitlist_joined_at=datetime.now() - timedelta(days=2)),
+        Enrollment(member_id=user_ids["noa@example.com"], class_id=classes[3].id, status="waitlist", waitlist_joined_at=datetime.now() - timedelta(days=1)),
     ]
     
     session.add_all(enrolls)
@@ -195,23 +203,70 @@ def seed_checkins(session, user_ids, subscriptions):
     print(f"✅ Created {len(checks)} check-ins")
 
 
-def seed_payments(session, subscriptions):
-    """Seed payments."""
+# def seed_payments(session, subscriptions, user_ids):
+#     """Seed payments."""
+#     print("💰 Seeding payments...")
+#     today = date.today()
+    
+#     subs_to_pay = subscriptions[:3]
+    
+#     # Corrected fields: reference, paid_at. removed method.
+#     pays = [
+#         Payment(subscription_id=subs_to_pay[0].id, member_id=user_ids["michal@example.com"], amount=499.0, status="completed", paid_at=today - timedelta(days=10), reference="PAY-001"),
+#         Payment(subscription_id=subs_to_pay[1].id, member_id=user_ids["ron@example.com"], amount=299.0, status="completed", paid_at=today - timedelta(days=5), reference="PAY-002"),
+#         Payment(subscription_id=subs_to_pay[2].id, member_id=user_ids["noa@example.com"], amount=350.0, status="completed", paid_at=today - timedelta(days=15), reference="PAY-003"),
+#     ]
+    
+#     session.add_all(pays)
+#     session.commit()
+#     print(f"✅ Created {len(pays)} payments")
+
+def seed_payments(session, subscriptions, user_ids):
     print("💰 Seeding payments...")
     today = date.today()
     
-    subs_to_pay = subscriptions[:3]
+    subs_to_pay = subscriptions[:3]   # First 3 subs
     
-    # Corrected fields: reference, paid_at. removed method.
     pays = [
-        Payment(subscription_id=subs_to_pay[0].id, amount=499.0, status="completed", paid_at=today - timedelta(days=10), reference="PAY-001"),
-        Payment(subscription_id=subs_to_pay[1].id, amount=299.0, status="completed", paid_at=today - timedelta(days=5), reference="PAY-002"),
-        Payment(subscription_id=subs_to_pay[2].id, amount=350.0, status="completed", paid_at=today - timedelta(days=15), reference="PAY-003"),
+        Payment(
+            subscription_id=subs_to_pay[0].id,
+            member_id=user_ids["michal@example.com"],
+            payment_method="subscription",
+            calculated_amount=499.0,
+            discount_applied=0,
+            amount=499.0,
+            status="completed",
+            paid_at=today - timedelta(days=10),
+            reference="PAY-001",
+        ),
+        Payment(
+            subscription_id=subs_to_pay[1].id,
+            member_id=user_ids["ron@example.com"],
+            payment_method="subscription",
+            calculated_amount=299.0,
+            discount_applied=0,
+            amount=299.0,
+            status="completed",
+            paid_at=today - timedelta(days=5),
+            reference="PAY-002",
+        ),
+        Payment(
+            subscription_id=subs_to_pay[2].id,
+            member_id=user_ids["noa@example.com"],
+            payment_method="subscription",
+            calculated_amount=350.0,
+            discount_applied=0,
+            amount=350.0,
+            status="completed",
+            paid_at=today - timedelta(days=15),
+            reference="PAY-003",
+        ),
     ]
     
     session.add_all(pays)
     session.commit()
     print(f"✅ Created {len(pays)} payments")
+
 
 
 def seed_workout_plans(session, user_ids):
@@ -250,6 +305,213 @@ def seed_workout_items(session, wps):
     print(f"✅ Created {len(items)} workout items")
 
 
+def seed_intake_evaluations(session, user_ids):
+    """Seed intake evaluations for members."""
+    print("🛡️ Seeding intake evaluations...")
+    today = date.today()
+    
+    evaluations = [
+        IntakeEvaluation(
+            member_id=user_ids["michal@example.com"],
+            evaluation_date=today - timedelta(days=30),
+            mental_status=json.dumps({"mood": "good", "anxiety": "low", "depression": "none"}),
+            cognitive_function=json.dumps({"memory": 8, "focus": 7, "processing": 8}),
+            physical_limitations=json.dumps({"injuries": [], "mobility": "full", "pain_level": 0}),
+            cleared_for_training=True,
+            notes="Excellent initial assessment. Ready for all activities.",
+            evaluated_by_id=user_ids["sara@example.com"]
+        ),
+        IntakeEvaluation(
+            member_id=user_ids["ron@example.com"],
+            evaluation_date=today - timedelta(days=25),
+            mental_status=json.dumps({"mood": "fair", "anxiety": "medium", "depression": "mild"}),
+            cognitive_function=json.dumps({"memory": 7, "focus": 6, "processing": 7}),
+            physical_limitations=json.dumps({"injuries": ["previous knee injury"], "mobility": "good", "pain_level": 2}),
+            cleared_for_training=True,
+            notes="Some anxiety noted. Recommend low-impact exercises initially. Monitor knee during workouts.",
+            evaluated_by_id=user_ids["david@example.com"]
+        ),
+        IntakeEvaluation(
+            member_id=user_ids["noa@example.com"],
+            evaluation_date=today - timedelta(days=20),
+            mental_status=json.dumps({"mood": "excellent", "anxiety": "low", "depression": "none"}),
+            cognitive_function=json.dumps({"memory": 9, "focus": 9, "processing": 9}),
+            physical_limitations=json.dumps({"injuries": [], "mobility": "excellent", "pain_level": 0}),
+            cleared_for_training=True,
+            notes="Outstanding health profile. Can participate in all high-intensity programs.",
+            evaluated_by_id=user_ids["sara@example.com"]
+        ),
+    ]
+    
+    session.add_all(evaluations)
+    session.commit()
+    print(f"✅ Created {len(evaluations)} intake evaluations")
+
+
+def seed_personal_tracking(session, user_ids):
+    """Seed personal tracking entries."""
+    print("❤️ Seeding personal tracking entries...")
+    today = date.today()
+    
+    tracking_entries = [
+        # Michal's tracking - last 7 days
+        PersonalTracking(
+            member_id=user_ids["michal@example.com"],
+            tracking_date=today - timedelta(days=6),
+            emotional_regulation=json.dumps({"mood": 7, "stress": 4, "energy": 6}),
+            symptom_tracking=json.dumps({"headache": False, "muscle_soreness": True}),
+            social_function=json.dumps({"social_interactions": "good", "motivation": 8}),
+            physical_function=json.dumps({"energy": 7, "sleep_hours": 7, "exercise_tolerance": "good"}),
+            notes="Feeling good after yesterday's workout.",
+            recorded_by_id=user_ids["michal@example.com"]
+        ),
+        PersonalTracking(
+            member_id=user_ids["michal@example.com"],
+            tracking_date=today - timedelta(days=3),
+            emotional_regulation=json.dumps({"mood": 8, "stress": 3, "energy": 8}),
+            symptom_tracking=json.dumps({"headache": False, "muscle_soreness": False}),
+            social_function=json.dumps({"social_interactions": "excellent", "motivation": 9}),
+            physical_function=json.dumps({"energy": 8, "sleep_hours": 8, "exercise_tolerance": "excellent"}),
+            notes="Great week! Feeling strong and motivated.",
+            recorded_by_id=user_ids["michal@example.com"]
+        ),
+        PersonalTracking(
+            member_id=user_ids["michal@example.com"],
+            tracking_date=today - timedelta(days=1),
+            emotional_regulation=json.dumps({"mood": 9, "stress": 2, "energy": 9}),
+            symptom_tracking=json.dumps({"headache": False, "muscle_soreness": False}),
+            social_function=json.dumps({"social_interactions": "excellent", "motivation": 9}),
+            physical_function=json.dumps({"energy": 9, "sleep_hours": 8, "exercise_tolerance": "excellent"}),
+            notes="Best week yet! Loving the routine.",
+            recorded_by_id=user_ids["michal@example.com"]
+        ),
+        # Ron's tracking - showing some variability
+        PersonalTracking(
+            member_id=user_ids["ron@example.com"],
+            tracking_date=today - timedelta(days=5),
+            emotional_regulation=json.dumps({"mood": 6, "stress": 6, "energy": 5}),
+            symptom_tracking=json.dumps({"headache": True, "muscle_soreness": True}),
+            social_function=json.dumps({"social_interactions": "fair", "motivation": 6}),
+            physical_function=json.dumps({"energy": 5, "sleep_hours": 6, "exercise_tolerance": "fair"}),
+            notes="Feeling a bit tired. Knee is acting up slightly.",
+            recorded_by_id=user_ids["ron@example.com"]
+        ),
+        PersonalTracking(
+            member_id=user_ids["ron@example.com"],
+            tracking_date=today - timedelta(days=2),
+            emotional_regulation=json.dumps({"mood": 7, "stress": 4, "energy": 7}),
+            symptom_tracking=json.dumps({"headache": False, "muscle_soreness": True}),
+            social_function=json.dumps({"social_interactions": "good", "motivation": 7}),
+            physical_function=json.dumps({"energy": 7, "sleep_hours": 7, "exercise_tolerance": "good"}),
+            notes="Better day. Knee feeling better with modifications.",
+            recorded_by_id=user_ids["ron@example.com"]
+        ),
+        # Noa's tracking - very consistent high performance
+        PersonalTracking(
+            member_id=user_ids["noa@example.com"],
+            tracking_date=today - timedelta(days=4),
+            emotional_regulation=json.dumps({"mood": 9, "stress": 2, "energy": 9}),
+            symptom_tracking=json.dumps({"headache": False, "muscle_soreness": False}),
+            social_function=json.dumps({"social_interactions": "excellent", "motivation": 10}),
+            physical_function=json.dumps({"energy": 9, "sleep_hours": 8, "exercise_tolerance": "excellent"}),
+            notes="PR on deadlifts today! Feeling unstoppable.",
+            recorded_by_id=user_ids["noa@example.com"]
+        ),
+        PersonalTracking(
+            member_id=user_ids["noa@example.com"],
+            tracking_date=today,
+            emotional_regulation=json.dumps({"mood": 9, "stress": 1, "energy": 10}),
+            symptom_tracking=json.dumps({"headache": False, "muscle_soreness": False}),
+            social_function=json.dumps({"social_interactions": "excellent", "motivation": 10}),
+            physical_function=json.dumps({"energy": 10, "sleep_hours": 8, "exercise_tolerance": "outstanding"}),
+            notes="Another great workout. Loving the new program!",
+            recorded_by_id=user_ids["noa@example.com"]
+        ),
+    ]
+    
+    session.add_all(tracking_entries)
+    session.commit()
+    print(f"✅ Created {len(tracking_entries)} personal tracking entries")
+
+
+def seed_error_reports(session, user_ids):
+    """Seed error reports for testing admin dashboard."""
+    print("⚠️ Seeding error reports...")
+    now = datetime.now()
+    
+    errors = [
+        ErrorReport(
+            error_type="ValidationError",
+            error_message="Invalid email format provided during registration",
+            stack_trace="File backend/app/schemas/user.py, line 45\nValidationError: Invalid email format",
+            occurred_at=now - timedelta(days=2, hours=3),
+            url="/users/create",
+            user_id=None,
+            severity="low",
+            status="resolved",
+            resolved_by_id=user_ids["yossi@example.com"],
+            resolved_at=now - timedelta(days=1, hours=12),
+            notes="Fixed validation on frontend"
+        ),
+        ErrorReport(
+            error_type="DatabaseError",
+            error_message="Connection timeout to database",
+            stack_trace="sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (2003, 'Can't connect to MySQL server')",
+            occurred_at=now - timedelta(hours=5),
+            url="/classes/list",
+            user_id=user_ids["sara@example.com"],
+            severity="high",
+            status="investigating",
+            resolved_by_id=None,
+            resolved_at=None,
+            notes="Investigating connection pool settings"
+        ),
+        ErrorReport(
+            error_type="APIError",
+            error_message="Payment gateway timeout",
+            stack_trace="requests.exceptions.Timeout: HTTPSConnectionPool(host='payment.gateway.com', port=443)",
+            occurred_at=now - timedelta(hours=2),
+            url="/payments/create",
+            user_id=user_ids["michal@example.com"],
+            severity="critical",
+            status="new",
+            resolved_by_id=None,
+            resolved_at=None,
+            notes="Customer unable to complete payment. Needs immediate attention."
+        ),
+        ErrorReport(
+            error_type="AuthenticationError",
+            error_message="Invalid JWT token signature",
+            stack_trace="jwt.exceptions.InvalidSignatureError: Signature verification failed",
+            occurred_at=now - timedelta(days=1, hours=8),
+            url="/auth/login",
+            user_id=None,
+            severity="medium",
+            status="new",
+            resolved_by_id=None,
+            resolved_at=None,
+            notes="Multiple failed login attempts detected"
+        ),
+        ErrorReport(
+            error_type="NotFoundError",
+            error_message="Class session not found",
+            stack_trace="backend.app.exceptions.NotFoundError: Class session with id=999 not found",
+            occurred_at=now - timedelta(hours=1),
+            url="/classes/999",
+            user_id=user_ids["ron@example.com"],
+            severity="low",
+            status="ignored",
+            resolved_by_id=user_ids["yossi@example.com"],
+            resolved_at=now - timedelta(minutes=30),
+            notes="User error - bookmark to deleted class. No action needed."
+        ),
+    ]
+    
+    session.add_all(errors)
+    session.commit()
+    print(f"✅ Created {len(errors)} error reports")
+
+
 def main():
     print("🌱 Starting database seeding (ORM)...")
     print("=" * 50)
@@ -265,9 +527,14 @@ def main():
         
         seed_enrollments(session, u_ids, classes)
         seed_checkins(session, u_ids, subs)
-        seed_payments(session, subs)
+        seed_payments(session, subs, u_ids)
         wps = seed_workout_plans(session, u_ids)
         seed_workout_items(session, wps)
+        
+        # Seed new features
+        seed_intake_evaluations(session, u_ids)
+        seed_personal_tracking(session, u_ids)
+        seed_error_reports(session, u_ids)
         
         print("=" * 50)
         print("🎉 Database seeding completed successfully!")

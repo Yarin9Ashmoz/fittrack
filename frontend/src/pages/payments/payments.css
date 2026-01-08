@@ -1,0 +1,84 @@
+/* ================================
+   Payments List – Modern FitTrack UI
+   ================================ */
+
+.payments-container {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.payments-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #d7dce5;
+    margin-bottom: 25px;
+}
+
+/* Table Wrapper */
+.payments-table-wrapper {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Table */
+.payments-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.payments-table thead {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.payments-table th {
+    padding: 14px;
+    text-align: left;
+    font-size: 14px;
+    color: #cbd5e1;
+    font-weight: 600;
+}
+
+.payments-table td {
+    padding: 14px;
+    font-size: 14px;
+    color: #e2e8f0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-completed {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.status-pending {
+    background: rgba(251, 191, 36, 0.2);
+    color: #f59e0b;
+}
+
+.status-failed {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+/* Empty State */
+.no-payments {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+    font-size: 18px;
+}

@@ -29,6 +29,10 @@ import ClassSessionView from './pages/classes/class_session_view';
 
 import PaymentsList from './pages/payments/payments_list';
 
+import IntakeEvaluationForm from './components/IntakeEvaluationForm/IntakeEvaluationForm';
+import PersonalTrackingDashboard from './pages/PersonalTrackingDashboard/PersonalTrackingDashboard';
+import ErrorReportDashboard from './pages/ErrorReportDashboard/ErrorReportDashboard';
+
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 
@@ -77,6 +81,11 @@ function App() {
 
                         <Route path="/workout-plan/create" element={<PrivateRoute><WorkoutPlansCreate /></PrivateRoute>} />
                         <Route path="/workout-plans/list" element={<PrivateRoute><WorkoutPlansList /></PrivateRoute>} />
+
+                        {/* New Feature Routes */}
+                        <Route path="/intake-evaluation/member/:memberId" element={<PrivateRoute><IntakeEvaluationForm /></PrivateRoute>} />
+                        <Route path="/personal-tracking/:memberId" element={<PrivateRoute><PersonalTrackingDashboard /></PrivateRoute>} />
+                        <Route path="/error-reports" element={<PrivateRoute><ErrorReportDashboard /></PrivateRoute>} />
                     </Routes>
                 </div>
             </Router>

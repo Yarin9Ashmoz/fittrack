@@ -35,7 +35,9 @@ def create_enrollment(data: dict):
                 member_id=member_id,
                 class_id=class_id,
                 status="enrolled",
-                waitlist_position=None
+                waitlist_position=None,
+                enrolled_at=datetime.utcnow(),
+                created_at=datetime.utcnow()
             )
             return new_enrollment
 
@@ -46,7 +48,9 @@ def create_enrollment(data: dict):
             member_id=member_id,
             class_id=class_id,
             status="waitlist",
-            waitlist_position=waitlist_count + 1
+            waitlist_position=waitlist_count + 1,
+            waitlist_joined_at=datetime.utcnow(),
+            created_at=datetime.utcnow()
         )
         return new_enrollment
 
@@ -80,7 +84,9 @@ def cancel_enrollment(enrollment_id: int):
                     status="promoted",
                     waitlist_position=None,
                     promoted_at=datetime.utcnow(),
-                    deadline_at=datetime.utcnow() + timedelta(hours=PROMOTION_DEADLINE_HOURS)
+                    deadline_at=datetime.utcnow() + timedelta(hours=PROMOTION_DEADLINE_HOURS),
+                    promotion_attempted_at=datetime.utcnow(),
+                    promotion_method="auto"  # Automatic promotion
                 )
 
                 # רה־אינדוקס של התור
@@ -108,7 +114,8 @@ def confirm_promotion(enrollment_id: int):
             enrollment_id,
             status="enrolled",
             promoted_at=None,
-            deadline_at=None
+            deadline_at=None,
+            enrolled_at=datetime.utcnow()
         )
 
         return enrollment

@@ -6,7 +6,7 @@ class UserCreateSchema(BaseModel):
     email: EmailStr
     phone: str = Field(..., pattern=r"^05\d{8}$")
     address: str | None = None
-    role: str = Field(..., pattern="^(member|coach|admin)$")
+    role: str = Field(..., pattern="^(member|trainer|admin)$")
     status: str = "active"
 
 
@@ -16,7 +16,7 @@ class UserUpdateSchema(BaseModel):
     email: EmailStr | None = None
     phone: str | None = Field(None, pattern=r"^05\d{8}$")
     address: str | None = None
-    role: str | None = Field(None, pattern="^(member|coach|admin)$")
+    role: str | None = Field(None, pattern="^(member|trainer|admin)$")
     status: str | None = None
 
 
