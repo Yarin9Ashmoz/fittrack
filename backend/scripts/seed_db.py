@@ -193,9 +193,9 @@ def seed_checkins(session, user_ids, subscriptions):
 
     # Corrected fields: member_id, timestamp
     checks = [
-        Checkin(member_id=user_ids["michal@example.com"], subscription_id=sub_michal.id, class_id=None, timestamp=datetime.combine(today - timedelta(days=5), datetime.min.time().replace(hour=10))),
-        Checkin(member_id=user_ids["ron@example.com"], subscription_id=sub_ron.id, class_id=None, timestamp=datetime.combine(today - timedelta(days=3), datetime.min.time().replace(hour=18))),
-        Checkin(member_id=user_ids["noa@example.com"], subscription_id=sub_noa.id, class_id=None, timestamp=datetime.combine(today - timedelta(days=2), datetime.min.time().replace(hour=7))),
+        Checkin(member_id=user_ids["michal@example.com"], member_name="מיכל אברהם", subscription_id=sub_michal.id, class_id=None, timestamp=datetime.combine(today - timedelta(days=5), datetime.min.time().replace(hour=10))),
+        Checkin(member_id=user_ids["ron@example.com"], member_name="רון מזרחי", subscription_id=sub_ron.id, class_id=None, timestamp=datetime.combine(today - timedelta(days=3), datetime.min.time().replace(hour=18))),
+        Checkin(member_id=user_ids["noa@example.com"], member_name="נועה כהן", subscription_id=sub_noa.id, class_id=None, timestamp=datetime.combine(today - timedelta(days=2), datetime.min.time().replace(hour=7))),
     ]
     
     session.add_all(checks)

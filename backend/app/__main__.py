@@ -30,6 +30,9 @@ def create_app():
     app = Flask(__name__)
     CORS(app, resources={r"/*": {"origins": "*"}})
 
+    # Ensure database schema is up-to-date (add new columns/backfills if needed)
+    from backend.app.db.database import create_all_tables
+    create_all_tables()
 
     # Register blueprints
     from backend.app.api.auth import auth_bp

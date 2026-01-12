@@ -4,7 +4,8 @@ from backend.app.schemas.checkin import CheckinCreateSchema, CheckinResponseSche
 from backend.app.services.checkin_service import (
     create_checkin,
     get_checkins_by_member,
-    get_all_checkins
+    get_all_checkins,
+    get_today_checkins
 )
 
 checkins_bp = Blueprint("checkins", __name__, url_prefix="/checkins")
@@ -12,6 +13,12 @@ checkins_bp = Blueprint("checkins", __name__, url_prefix="/checkins")
 @checkins_bp.get("/")
 def get_all_checkins_route():
     checkins = get_all_checkins()
+    return jsonify([CheckinResponseSchema.from_orm(c).dict() for c in checkins]), HTTPStatus.OK
+
+
+@checkins_bp.get("/today")
+def get_today_checkins_route():
+    checkins = get_today_checkins()
     return jsonify([CheckinResponseSchema.from_orm(c).dict() for c in checkins]), HTTPStatus.OK
 
 # יצירת Check-in חדש

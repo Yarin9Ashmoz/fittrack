@@ -10,6 +10,7 @@ class CheckinCreateSchema(BaseModel):
 class CheckinResponseSchema(BaseModel):
     id: int
     member_id: int
+    member_name: str
     subscription_id: int
     class_id: int | None
     timestamp: datetime

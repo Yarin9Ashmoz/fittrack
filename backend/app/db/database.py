@@ -60,6 +60,27 @@ def create_all_tables(drop_first=False):
         Base.metadata.drop_all(engine)
     
     Base.metadata.create_all(engine)
+
+    # Ensure 'member_name' exists on 'checkins' table (backfill from users if missing)
+    try:
+        from sqlalchemy import inspect, text
+        inspector = inspect(engine)
+        if 'checkins' in inspector.get_table_names():
+            cols = [c['name'] for c in inspector.get_columns('checkins')]
+            if 'member_name' not in cols:
+                with engine.connect() as conn:
+                    conn.execute(text("ALTER TABLE checkins ADD COLUMN member_name VARCHAR(150) DEFAULT ''"))
+                    # backfill existing rows from users
+                    try:
+                        conn.execute(text("UPDATE checkins JOIN users ON checkins.member_id = users.id SET checkins.member_name = CONCAT(users.first_name, ' ', users.last_name)"))
+                    except Exception:
+                        # MySQL-specific JOIN syntax might fail on other DBs; ignore if update fails
+                        pass
+                    conn.commit()
+    except Exception:
+        # If inspection fails (e.g., different DB), skip gracefully
+        pass
+
     print("All tables created successfully, including new feature tables.")
 
 
