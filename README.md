@@ -8,7 +8,8 @@ Quick Start for Evaluators
    bash: python3.10 -m venv .venv
    bash: source .venv/bin/activate
    bash: pip install --upgrade pip
-   bash: pip install -r requirements.txt
+   bash: ./setup.sh # creates and activates a venv under backend/ and installs dependencies
+
 3. Configure DB: edit backend/config.ini (MySQL). (editor)
 4. Initialize DB:
    bash: ./init_db.sh
