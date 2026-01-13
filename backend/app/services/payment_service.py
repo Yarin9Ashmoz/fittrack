@@ -93,8 +93,7 @@ def process_subscription_payment(subscription_id: int, amount: float):
     with SessionLocal() as session:
         payment_repo = PaymentRepository(session)
         
-        # Get member from subscription (would need subscription repository)
-        # For now, require member_id to be passed
+
         
         calculated_amount = Decimal(str(amount))
         payment = payment_repo.create(
