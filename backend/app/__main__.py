@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
+
 # Error classes
 from backend.app.exceptions import (
     NotFoundError,

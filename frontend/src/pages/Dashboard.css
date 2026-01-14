@@ -47,23 +47,27 @@
 }
 
 .icon-box.blue {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #667eea 0%, #36437d 100%);
 }
 
 .icon-box.green {
-    background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+    background: linear-gradient(135deg, #84fab0 0%, #498860 100%);
 }
 
 .icon-box.purple {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background: linear-gradient(135deg, #fed6e3 0%, #9c8189 100%);
 }
 
 .icon-box.orange {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    background: linear-gradient(135deg, #fee140 0%, #9d8c28 100%);
 }
 
 .icon-box.red {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #f5576c 0%, #a13a48 100%);
+}
+
+.icon-box.white {
+    background: linear-gradient(135deg, #d1cfd0 0%, #595859 100%);
 }
 
 .stat-info {
@@ -105,7 +109,7 @@
 .recent-activity h3,
 .quick-actions h3 {
     margin: 0 0 20px 0;
-    color: #94a3b8;
+    color: #c0cad8;
     font-size: 18px;
 }
 
@@ -135,7 +139,7 @@
 }
 
 .premium-gradient {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2e4fe3 0%, #667eea 100%) !important;
     color: white;
 }
 

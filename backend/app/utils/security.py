@@ -19,6 +19,11 @@ def generate_token(user_id: int):
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+
+        # Allow preflight requests
+        if request.method == "OPTIONS":
+            return f(*args, **kwargs)
+
         token = None
         if 'Authorization' in request.headers:
             token = request.headers['Authorization'].split(" ")[1]
@@ -34,12 +39,11 @@ def token_required(f):
                     return jsonify({'message': 'User not found!'}), 401
                 g.user = user
         except Exception as e:
-            import sys
-            print(f"Token validation error: {e}", file=sys.stderr)
             return jsonify({'message': 'Token is invalid!'}), 401
 
         return f(*args, **kwargs)
     return decorated
+
 
 def roles_required(*roles):
     def decorator(f):

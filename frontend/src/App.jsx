@@ -11,6 +11,7 @@ import EnrollmentsList from "./pages/enrollments/enrollments_list";
 import EnrollmentCreate from "./pages/enrollments/enrollment_create";
 import ClassWaitlist from "./pages/classes/class_waitlist";
 
+import CheckinsList from './pages/checkins/checkins_list';
 
 import PlanCreate from './pages/plans/plan_create';
 import PlanList from './pages/plans/plans_list';
@@ -30,6 +31,8 @@ import ClassSessionView from './pages/classes/class_session_view';
 import PaymentsList from './pages/payments/payments_list';
 
 import IntakeEvaluationForm from './components/IntakeEvaluationForm/IntakeEvaluationForm';
+import IntakeEvaluationList from './components/IntakeEvaluationForm/IntakeEvaluationList';
+
 import PersonalTrackingDashboard from './pages/PersonalTrackingDashboard/PersonalTrackingDashboard';
 import ErrorReportDashboard from './pages/ErrorReportDashboard/ErrorReportDashboard';
 
@@ -65,7 +68,8 @@ function App() {
                         <Route path="/enrollments/list" element={<PrivateRoute><EnrollmentsList /></PrivateRoute>} />
                         <Route path="/enroll/:classId" element={<PrivateRoute><EnrollmentCreate /></PrivateRoute>} />
                         <Route path="/classes/:classId/waitlist" element={<PrivateRoute><ClassWaitlist /></PrivateRoute>} />
-
+                        
+                        <Route path="/checkins/today" element={<PrivateRoute><CheckinsList /></PrivateRoute>} />
 
                         <Route path="/plans/create" element={<PrivateRoute><PlanCreate /></PrivateRoute>} />
                         <Route path="/plans/list" element={<PrivateRoute><PlanList /></PrivateRoute>} />
@@ -82,7 +86,8 @@ function App() {
                         <Route path="/workout-plan/create" element={<PrivateRoute><WorkoutPlansCreate /></PrivateRoute>} />
                         <Route path="/workout-plans/list" element={<PrivateRoute><WorkoutPlansList /></PrivateRoute>} />
 
-                        {/* New Feature Routes */}
+                        <Route path="/intake-evaluations/" element={<PrivateRoute><IntakeEvaluationForm /></PrivateRoute>} />
+                        <Route path="/intake-evaluations/list" element={<PrivateRoute><IntakeEvaluationList /></PrivateRoute>} />
                         <Route path="/intake-evaluation/member/:memberId" element={<PrivateRoute><IntakeEvaluationForm /></PrivateRoute>} />
                         <Route path="/personal-tracking/:memberId" element={<PrivateRoute><PersonalTrackingDashboard /></PrivateRoute>} />
                         <Route path="/error-reports" element={<PrivateRoute><ErrorReportDashboard /></PrivateRoute>} />

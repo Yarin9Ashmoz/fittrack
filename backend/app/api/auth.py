@@ -18,11 +18,6 @@ def login():
 
         if not user or not user.password_hash:
             return jsonify({"error": "Invalid credentials"}), 401
-
-        # NOTE: For this project, we might need a mix of plain comparison if seed data is plain,
-        # but let's implement standard bcrypt validation.
-        # If user.password_hash is "password", bcrypt will fail unless we handle it.
-        # Given the "expert Python architect" requirement, we use bcrypt.
         
         try:
             if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):

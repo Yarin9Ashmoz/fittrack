@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../../components/Layout";
 
@@ -12,7 +13,7 @@ const SubscriptionsList = () => {
     useEffect(() => {
         const fetchSubscriptions = async () => {
             try {
-                const response = await axios.get(`${API_URL}/subscriptions`);
+                const response = await axios.get(`${API_URL}/subscriptions/`);
                 setSubscriptions(response.data);
             } catch (err) {
                 setError("Error loading subscriptions");

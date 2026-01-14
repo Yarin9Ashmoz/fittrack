@@ -7,6 +7,11 @@ def create_intake_evaluation(evaluation_data):
     with SessionLocal() as session:
         repo = IntakeEvaluationRepository(session)
         return repo.create(**evaluation_data.dict())
+    
+def get_all_intake_evaluations():
+    """Get all intake evaluations"""
+    with SessionLocal() as session:
+        return IntakeEvaluationRepository(session).get_all()
 
 def get_intake_evaluation_by_id(evaluation_id: int):
     """Get intake evaluation by ID"""

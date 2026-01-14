@@ -71,6 +71,25 @@
     animation: fadeIn 0.5s ease-out;
 }
 
+.search-bar-container { position: relative; }
+.search-results { 
+    position: absolute;
+    top: 45px;
+    left: 0; 
+    width: 100%; 
+    background: var(--bg-light); 
+    border-radius: 8px; 
+    padding: 10px 10%; 
+    margin: 15% auto;
+    z-index: 1000; 
+    max-height: 250px; 
+    overflow-y: auto; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+ }
+.search-item { padding: 10px 15px; cursor: pointer; color: var(--text-main); }
+.search-item:hover { background: rgba(255,255,255,0.1); }
+
+
 @keyframes fadeIn {
     from {
         opacity: 0;

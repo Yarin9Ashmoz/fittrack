@@ -20,6 +20,17 @@ def create_intake_evaluation_route():
     new_evaluation = intake_evaluation_service.create_intake_evaluation(evaluation_data)
     return jsonify(IntakeEvaluationResponse.from_orm(new_evaluation).dict()), 201
 
+@intake_evaluations_bp.get("")
+@intake_evaluations_bp.get("/")
+@token_required
+def get_all_evaluations_route():
+    if not can_create_intake_evaluation(g.user):
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    evaluations = intake_evaluation_service.get_all_intake_evaluations()
+    return jsonify([IntakeEvaluationResponse.from_orm(e).dict() for e in evaluations]), 200
+
+
 @intake_evaluations_bp.get("/member/<int:member_id>")
 @token_required
 def get_member_evaluations_route(member_id):

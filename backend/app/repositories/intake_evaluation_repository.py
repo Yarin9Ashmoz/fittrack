@@ -5,6 +5,10 @@ from sqlalchemy.orm import Session
 class IntakeEvaluationRepository(BaseRepository[IntakeEvaluation]):
     def __init__(self, session: Session):
         super().__init__(IntakeEvaluation, session)
+
+    def get_all(self):
+        """Get all intake evaluations"""
+        return self.session.query(self.model).all() 
     
     def get_by_member_id(self, member_id: int):
         """Get all evaluations for a specific member"""

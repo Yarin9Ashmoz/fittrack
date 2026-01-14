@@ -57,7 +57,7 @@ const Dashboard = () => {
           axios.get(`${API_URL}/plans/`, { headers }),
           axios.get(`${API_URL}/subscriptions/`, { headers }),
           axios.get(`${API_URL}/classes/`, { headers }),
-          axios.get(`${API_URL}/checkins/`, { headers }),
+          axios.get(`${API_URL}/checkins/today`, { headers }),
         ];
 
         if (isAdmin) {
@@ -110,12 +110,14 @@ const Dashboard = () => {
           label="Active Plans"
           value={stats.plans}
           color="green"
+          onClick={() => navigate("/plans/list")}
         />
         <StatCard
           icon={<Activity size={24} />}
           label="Subscriptions"
           value={stats.subscriptions}
           color="purple"
+          onClick={() => navigate("/subscriptions/list")}
         />
         <StatCard
           icon={<Calendar size={24} />}
@@ -128,7 +130,7 @@ const Dashboard = () => {
           icon={<CalendarCheck size={24} />}
           label="Check-ins"
           value={stats.checkins}
-          color="teal"
+          color="white"
           onClick={() => navigate("/checkins/today")}
         />
         {isAdmin && (
@@ -164,7 +166,7 @@ const Dashboard = () => {
               {(isAdmin || isTrainer) && (
                 <button
                   className="action-btn glass"
-                  onClick={() => navigate("/users/list")}
+                  onClick={() => navigate("/intake-evaluations/")}
                   title="Create intake evaluation for a member"
                 >
                   <Shield size={18} /> New Evaluation
@@ -187,7 +189,7 @@ const Dashboard = () => {
               {(isAdmin || isTrainer) && (
                 <div
                   className="feature-item"
-                  onClick={() => navigate("/users/list")}
+                  onClick={() => navigate("/intake-evaluations/list")}
                 >
                   <Shield className="feature-icon" size={20} />
                   <div>
