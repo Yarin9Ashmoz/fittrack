@@ -92,6 +92,9 @@ def update_user(user_id: int, user_data):
     update_data = {k: v for k, v in user_data.dict().items() if v is not None}
     return svc.update(user_id, **update_data)
 
+def change_user_status(user_id: int, status: bool):
+    svc = GenericUserService()
+    return svc.update(user_id, status=status)
 
 def delete_user(user_id: int):
     svc = GenericUserService()

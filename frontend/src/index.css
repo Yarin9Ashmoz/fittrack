@@ -19,14 +19,13 @@
 }
 
 .users-table tbody tr:hover td {
-  background-color: rgba(1, 70, 144, 0.4) !important;  
+  background-color: rgba(51, 109, 171, 0.267) !important;  
   --bg-dark: #0A0A0C !important;
   --text-dim: #A0A0A5 !important;
   --primary: #007AFF !important;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
-
-
 
 
 
@@ -48,7 +47,7 @@ body {
 }
 
 .premium-gradient {
-  background: linear-gradient(135deg, var(--primary), #8E54E9);
+  background: linear-gradient(135deg, var(--primary), #2f43a8);
 }
 
 button {

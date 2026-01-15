@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../../components/Layout";
+import "./users.css";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const UsersList = () => {
@@ -40,38 +41,47 @@ const UsersList = () => {
 
   return (
     <Layout>
-      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-        <h2>Users List</h2>
-        <table className="table table-striped users-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Role</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr
-                key={user.id}
-                onClick={() => navigate(`/users/${user.id}`)}
-                style={{ cursor: "pointer" }}
-              >
-                <td>{user.id}</td>
-                <td>
-                  {user.first_name} {user.last_name}
-                </td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>{user.role}</td>
-                <td>{user.status}</td>
+      <div className="users-container">
+        <h2 className="users-title">Users List</h2>
+
+        <div className="users-table-wrapper">
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id} onClick={() => navigate(`/users/${user.id}`)}>
+                  <td>{user.id}</td>
+                  <td>
+                    {user.first_name} {user.last_name}
+                  </td>
+                  <td>{user.email}</td>
+                  <td>{user.phone}</td>
+                  <td>{user.role}</td>
+
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        user.status ? "status-active" : "status-inactive"
+                      }`}
+                    >
+                      {user.status ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </Layout>
   );

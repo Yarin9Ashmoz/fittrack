@@ -164,7 +164,36 @@ const UserDetails = () => {
                 </span>
               </div>
               <div>
-                <strong>Status:</strong> {user.status}
+                <strong>Status:</strong> 
+                <select
+                  name="status"
+                  value={user.status}
+                  onChange={async (e) => {
+                    const newStatus = e.target.value;
+                    try {
+                      await axios.put(`${API_URL}/users/${userId}`, {
+                        status: newStatus,
+                      });
+                      setUser((prev) => ({ ...prev, status: newStatus }));
+                    } catch (err) {
+                      alert("Error updating status");
+                    }
+                  }}
+                  style={{ 
+                    marginLeft: "10px",
+                    padding: "4px 12px",
+                    borderRadius: "12px",
+                    color: "white",
+                    border: "none",
+                    backgroundColor: user.status === "active" ? '#0e8f4dce' : '#911919c5',
+                   }}
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div>
+                
               </div>
             </div>
           )}
@@ -238,7 +267,7 @@ const UserDetails = () => {
                           style={{
                             padding: "10px 20px",
                             background:
-                              "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              "linear-gradient(135deg, #2e4fe3 0%, #2e4fe3 100%)",
                             color: "white",
                             border: "none",
                             borderRadius: "8px",
